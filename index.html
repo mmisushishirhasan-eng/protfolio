@@ -721,11 +721,14 @@
         }
 
         /* 4. Pull the 'Hire Me' button upwards */
-        .btn-hire-me {
-            position: relative !important;
-            top: -35px !important;
-            /* Pulls it up safely without breaking your hover transform */
-            margin-top: 0 !important;
+        .hero-section .btn-hire-me {
+            transform: translateY(-10px) !important;
+            /* Nudged down from before for perfect balance */
+            margin-top: 20px !important;
+            /* Consistent gap below the description */
+            transition: all 0.3s ease-in-out !important;
+            /* Smooth professional hover effects */
+            display: inline-block;
         }
 
         /* 5. Force Typing Animation to have enough space to complete */
