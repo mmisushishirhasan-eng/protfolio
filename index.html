@@ -326,16 +326,16 @@
             transition: all 0.3s ease;
         }
 
-        /* High-Specificity Active State Styling */
-        .navbar .navbar-nav .nav-link.active,
-        .navbar .navbar-nav .nav-link:hover {
+        /* Absolute Override Active State Styling */
+        .nav-link[data-active="true"],
+        .nav-link:hover {
             color: #00d2ff !important;
             /* Vibrant cyan */
             font-weight: 700 !important;
             /* Bold for visibility */
             text-decoration: none !important;
             text-shadow: 0 0 15px rgba(0, 210, 255, 0.3);
-            /* Subtle premium glow */
+            /* Premium glow */
         }
 
         /* Additional Section Styling */
@@ -1345,63 +1345,65 @@
             greetingElement.textContent = greeting;
         }
 
-        // --- PROFESSIONAL SYNCHRONIZED NAV LOGIC ---
-        window.onload = function () {
-            const navLinks = document.querySelectorAll('.nav-link');
-            const sections = document.querySelectorAll('section[id]');
+        // --- ABSOLUTE OVERRIDE NAV LOGIC ---
+        (function () {
+            window.addEventListener('load', function () {
+                // 1. KILL Bootstrap Scrollspy
+                const body = document.body;
+                const scrollSpy = bootstrap.ScrollSpy.getInstance(body);
+                if (scrollSpy) scrollSpy.dispose();
 
-            // 1. Kill any existing Bootstrap Scrollspy to prevent conflicts
-            const scrollSpyInstance = bootstrap.ScrollSpy.getInstance(document.body);
-            if (scrollSpyInstance) scrollSpyInstance.dispose();
+                const navLinks = document.querySelectorAll('.nav-link');
+                const sections = document.querySelectorAll('section[id]');
 
-            // Function to strictly set active class
-            function setActive(link) {
-                navLinks.forEach(l => l.classList.remove('active'));
-                if (link) link.classList.add('active');
-            }
+                function forceActive(target) {
+                    navLinks.forEach(l => {
+                        l.removeAttribute('data-active');
+                        l.classList.remove('active');
+                        // Explicitly force color reset
+                        l.style.setProperty('color', 'rgba(255, 255, 255, 0.7)', 'important');
+                    });
+                    if (target) {
+                        target.setAttribute('data-active', 'true');
+                        // Explicitly force color apply
+                        target.style.setProperty('color', '#00d2ff', 'important');
+                    }
+                }
 
-            // 2. Click Handling with Manual Smooth Scroll (Prevents state resets)
-            navLinks.forEach(link => {
-                link.addEventListener('click', function (e) {
-                    e.preventDefault(); // Stop default jump
-                    const targetId = this.getAttribute('href');
-                    const targetSection = document.querySelector(targetId);
-
-                    if (targetSection) {
-                        // Instantly lock active state
-                        setActive(this);
-
-                        // Professional Smooth Scroll
-                        window.scrollTo({
-                            top: targetSection.offsetTop - 80, // Offset for fixed navbar
-                            behavior: 'smooth'
-                        });
-
-                        // Fallback: Ensure it stays active after scroll ends
-                        setTimeout(() => setActive(this), 800);
+                // 2. WINDOW LEVEL LISTENER
+                window.addEventListener('click', function (e) {
+                    const link = e.target.closest('.nav-link');
+                    if (link) {
+                        forceActive(link);
+                        localStorage.setItem('absActiveNav', link.getAttribute('href'));
                     }
                 });
+
+                // 3. Scroll Synchronization (Observer)
+                const observerOptions = {
+                    root: null,
+                    rootMargin: '-10% 0px -75% 0px',
+                    threshold: 0
+                };
+
+                const observer = new IntersectionObserver(entries => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            const id = entry.target.getAttribute('id');
+                            const link = document.querySelector(`.nav-link[href="#${id}"]`);
+                            if (link) forceActive(link);
+                        }
+                    });
+                }, observerOptions);
+
+                sections.forEach(s => observer.observe(s));
+
+                // 4. Memory Restore
+                const saved = localStorage.getItem('absActiveNav') || '#home';
+                const defaultLink = document.querySelector(`.nav-link[href="${saved}"]`);
+                forceActive(defaultLink);
             });
-
-            // 3. Modern Intersection Observer (Syncs active state with scroll position)
-            const observerOptions = {
-                root: null,
-                rootMargin: '-10% 0px -70% 0px',
-                threshold: 0
-            };
-
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const id = entry.target.getAttribute('id');
-                        const matchingLink = document.querySelector(`.nav-link[href="#${id}"]`);
-                        setActive(matchingLink);
-                    }
-                });
-            }, observerOptions);
-
-            sections.forEach(section => observer.observe(section));
-        };
+        })();
     </script>
 
     <!-- Floating Action Button -->
