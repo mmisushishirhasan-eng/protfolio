@@ -817,8 +817,7 @@
     </style>
 </head>
 
-<body data-bs-spy="scroll" data-bs-target="#navbarNav" data-bs-root-margin="0px 0px -25%" data-bs-smooth-scroll="true"
-    tabindex="0">
+<body tabindex="0">
 
     <!-- Page Preloader -->
     <div id="preloader">
@@ -1341,15 +1340,49 @@
             greetingElement.textContent = greeting;
         }
 
-        // Failsafe Navbar Active State on Click
+        // --- NUCLEAR FAILSAFE NAV LOGIC ---
+        const sections = document.querySelectorAll('section[id]');
         const navLinks = document.querySelectorAll('.nav-link');
+
+        function activateNav() {
+            let scrollPos = window.scrollY || document.documentElement.scrollTop;
+            scrollPos += 150; // Trigger threshold
+
+            sections.forEach(section => {
+                if (scrollPos >= section.offsetTop && scrollPos < (section.offsetTop + section.offsetHeight)) {
+                    const targetId = section.getAttribute('id');
+                    navLinks.forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href') === `#${targetId}`) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
+            });
+        }
+
+        // 1. Listen for Scroll
+        window.addEventListener('scroll', activateNav);
+
+        // 2. Listen for Clicks
         navLinks.forEach(link => {
             link.addEventListener('click', function () {
-                // Instantly remove 'active' class from ALL links to prevent double-highlighting
                 navLinks.forEach(btn => btn.classList.remove('active'));
-                // Add 'active' class only to the clicked link
                 this.classList.add('active');
+
+                // Remember selection even on page reload
+                localStorage.setItem('activeNavLink', this.getAttribute('href'));
             });
+        });
+
+        // 3. Initial Load Sync
+        window.addEventListener('load', () => {
+            const savedLink = localStorage.getItem('activeNavLink') || '#home';
+            navLinks.forEach(link => {
+                if (link.getAttribute('href') === savedLink) link.classList.add('active');
+                else link.classList.remove('active');
+            });
+            activateNav();
         });
     </script>
 
