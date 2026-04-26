@@ -27,10 +27,15 @@
         .hero-section {
             background-color: #121212;
             color: #ffffff;
-            min-height: auto; /* Changed from 100vh */
-            padding-top: 120px !important; /* Account for navbar */
+            min-height: auto;
+            /* Changed from 100vh */
+            padding-top: 80px !important;
+            /* Reduced from 120px to bring content higher */
+            padding-bottom: 40px !important;
+            /* Reduced bottom padding */
             display: flex;
             align-items: center;
+            /* This uses Flexbox to perfectly center vertically */
             position: relative;
             overflow: hidden;
         }
@@ -101,14 +106,31 @@
         }
 
         @keyframes morph {
-            0% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
-            50% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
-            100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+            0% {
+                border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+            }
+
+            50% {
+                border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%;
+            }
+
+            100% {
+                border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+            }
         }
 
         @keyframes aura-pulse {
-            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
-            50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.7; }
+
+            0%,
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 0.5;
+            }
+
+            50% {
+                transform: translate(-50%, -50%) scale(1.2);
+                opacity: 0.7;
+            }
         }
 
         .greeting-text {
@@ -131,9 +153,17 @@
         }
 
         @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
-            100% { transform: translateY(0px); }
+            0% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+
+            100% {
+                transform: translateY(0px);
+            }
         }
 
         /* Typography Highlights */
@@ -150,7 +180,8 @@
             font-size: 1.5rem;
             font-weight: 300;
             color: #b0b0b0;
-            margin-bottom: 2.5rem;
+            margin-bottom: 1.2rem !important;
+            /* Reduced from 2.5rem to pull button up */
         }
 
         /* Modern Button Styling */
@@ -173,7 +204,8 @@
 
         /* Premium Skill Cards */
         .skill-card {
-            background: rgba(255, 255, 255, 0.6); /* Glass effect for light mode */
+            background: rgba(255, 255, 255, 0.6);
+            /* Glass effect for light mode */
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.4);
@@ -190,7 +222,8 @@
 
         .skill-card h5 {
             font-weight: 600;
-            color: #333; /* Dark grey for readability in light mode */
+            color: #333;
+            /* Dark grey for readability in light mode */
             margin-bottom: 4px;
             transition: color 0.3s ease;
         }
@@ -204,7 +237,8 @@
         }
 
         [data-bs-theme="dark"] .skill-card {
-            background: rgba(30, 41, 59, 0.5) !important; /* Deep navy glass */
+            background: rgba(30, 41, 59, 0.5) !important;
+            /* Deep navy glass */
             border: 1px solid rgba(255, 255, 255, 0.05) !important;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
         }
@@ -243,7 +277,7 @@
             width: 100%;
             margin-top: auto;
         }
-        
+
         [data-bs-theme="dark"] .progress {
             background-color: rgba(255, 255, 255, 0.05);
         }
@@ -296,7 +330,8 @@
 
         /* Additional Section Styling */
         .content-section {
-            padding: 60px 0; /* Reduced from 100px */
+            padding: 60px 0;
+            /* Reduced from 100px */
             /* min-height: 100vh removed to make sections compact */
             display: flex;
             align-items: center;
@@ -360,16 +395,17 @@
 
         [data-bs-theme="light"] .form-control {
             :root {
-            --bg-color: #0f172a;
-            --text-color: #f8fafc;
-            --skills-bg: #0f172a;
-        }
+                --bg-color: #0f172a;
+                --text-color: #f8fafc;
+                --skills-bg: #0f172a;
+            }
 
-        [data-bs-theme="light"] {
-            --bg-color: #ffffff;
-            --text-color: #0f172a;
-            --skills-bg: #f8f9fa;
-        }
+            [data-bs-theme="light"] {
+                --bg-color: #ffffff;
+                --text-color: #0f172a;
+                --skills-bg: #f8f9fa;
+            }
+
             background-color: #f8f9fa;
             border-color: #dee2e6;
             color: #333;
@@ -432,14 +468,16 @@
             .hero-subtitle {
                 font-size: 1.2rem;
             }
-            
+
             .content-section {
-                padding: 40px 0; /* Even more compact on mobile */
+                padding: 40px 0;
+                /* Even more compact on mobile */
             }
-            
+
             .hero-section {
                 min-height: auto;
-                padding-top: 100px; /* Account for navbar */
+                padding-top: 100px;
+                /* Account for navbar */
                 padding-bottom: 60px;
             }
         }
@@ -632,7 +670,7 @@
             color: white;
             text-decoration: none;
             font-size: 20px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
             transition: all 0.3s ease;
         }
 
@@ -641,12 +679,66 @@
             color: white;
         }
 
-        .fab-whatsapp { background-color: #25d366; }
-        .fab-linkedin { background-color: #0077b5; }
-        .fab-github { background-color: #333; }
+        .fab-whatsapp {
+            background-color: #25d366;
+        }
+
+        .fab-linkedin {
+            background-color: #0077b5;
+        }
+
+        .fab-github {
+            background-color: #333;
+        }
+
+        /* --- HERO SECTION CSS RESET & LAYOUT FIX --- */
+
+        /* 1. Global Reset for Hero padding/margins */
+        .hero-section {
+            padding-top: 100px !important;
+            padding-bottom: 50px !important;
+            min-height: auto !important;
+            display: flex !important;
+            align-items: center !important;
+            margin: 0 !important;
+        }
+
+        /* 2. Force Horizontal Alignment */
+        .hero-content>.row {
+            align-items: center !important;
+            width: 100%;
+        }
+
+        /* 3. Strip hidden margins pushing content down */
+        .hero-section h1,
+        .hero-section p {
+            margin-top: 0 !important;
+        }
+
+        .hero-subtitle {
+            margin-bottom: 15px !important;
+            /* Very tight gap */
+        }
+
+        /* 4. Pull the 'Hire Me' button upwards */
+        .btn-hire-me {
+            position: relative !important;
+            top: -25px !important;
+            /* Pulls it up safely without breaking your hover transform */
+            margin-top: 0 !important;
+        }
+
+        /* 5. Force Typing Animation to have enough space to complete */
+        .typing-text {
+            display: inline-block;
+            white-space: nowrap;
+            /* Prevents text from breaking to a new line */
+            min-width: 260px;
+            /* Guarantees space for 'UI/UX Designer' */
+        }
 
         /* --- FORCE OVERRIDE SPACING --- */
-        
+
         section {
             margin-top: 0 !important;
             margin-bottom: 0 !important;
@@ -722,7 +814,9 @@
                     <div id="greeting" class="greeting-text"></div>
                     <h1 class="hero-title">Crafting Digital Experiences</h1>
                     <p class="hero-subtitle">I'm a passionate <span class="typing-text fw-bold text-info"></span>
-                        <br class="d-none d-lg-block">dedicated to building beautiful, scalable, and responsive applications.</p>
+                        <br class="d-none d-lg-block">dedicated to building beautiful, scalable, and responsive
+                        applications.
+                    </p>
                     <a href="#contact" class="btn btn-hire-me mt-3">Hire Me</a>
                 </div>
                 <div class="col-lg-5 text-center">
@@ -756,16 +850,17 @@
                 <h2 class="display-5 fw-bold">My Skills</h2>
                 <p class="lead text-muted">A blend of technical expertise and creative tools.</p>
             </div>
-            
+
             <div class="row g-4 mb-5">
                 <!-- Development Category -->
                 <div class="col-12 mb-2" data-aos="fade-right">
                     <h4 class="fw-bold mb-0"><i class="fas fa-code me-2 text-info"></i> Development</h4>
                 </div>
-                
+
                 <!-- HTML5 -->
                 <div class="col-6 col-md-4 col-lg-3 d-flex align-items-stretch" data-aos="zoom-in" data-aos-delay="100">
-                    <div class="skill-card text-center w-100" style="--skill-color: #e44d26; --skill-glow: rgba(228, 77, 38, 0.4);">
+                    <div class="skill-card text-center w-100"
+                        style="--skill-color: #e44d26; --skill-glow: rgba(228, 77, 38, 0.4);">
                         <i class="fab fa-html5 skill-icon"></i>
                         <h5 data-bs-toggle="tooltip" data-bs-placement="top" title="Expert">HTML5</h5>
                         <p class="skill-caption">Structuring the Web</p>
@@ -777,7 +872,8 @@
 
                 <!-- CSS3 -->
                 <div class="col-6 col-md-4 col-lg-3 d-flex align-items-stretch" data-aos="zoom-in" data-aos-delay="200">
-                    <div class="skill-card text-center w-100" style="--skill-color: #0277bd; --skill-glow: rgba(2, 119, 189, 0.4);">
+                    <div class="skill-card text-center w-100"
+                        style="--skill-color: #0277bd; --skill-glow: rgba(2, 119, 189, 0.4);">
                         <i class="fab fa-css3-alt skill-icon"></i>
                         <h5 data-bs-toggle="tooltip" data-bs-placement="top" title="Expert">CSS3</h5>
                         <p class="skill-caption">Designing Visual Layouts</p>
@@ -789,7 +885,8 @@
 
                 <!-- JavaScript -->
                 <div class="col-6 col-md-4 col-lg-3 d-flex align-items-stretch" data-aos="zoom-in" data-aos-delay="300">
-                    <div class="skill-card text-center w-100" style="--skill-color: #d4ac0d; --skill-glow: rgba(212, 172, 13, 0.4);">
+                    <div class="skill-card text-center w-100"
+                        style="--skill-color: #d4ac0d; --skill-glow: rgba(212, 172, 13, 0.4);">
                         <i class="fab fa-js skill-icon"></i>
                         <h5 data-bs-toggle="tooltip" data-bs-placement="top" title="Expert">JavaScript</h5>
                         <p class="skill-caption">Engineering Interactivity</p>
@@ -801,7 +898,8 @@
 
                 <!-- Bootstrap 5 -->
                 <div class="col-6 col-md-4 col-lg-3 d-flex align-items-stretch" data-aos="zoom-in" data-aos-delay="400">
-                    <div class="skill-card text-center w-100" style="--skill-color: #6f42c1; --skill-glow: rgba(111, 66, 193, 0.4);">
+                    <div class="skill-card text-center w-100"
+                        style="--skill-color: #6f42c1; --skill-glow: rgba(111, 66, 193, 0.4);">
                         <i class="fab fa-bootstrap skill-icon"></i>
                         <h5 data-bs-toggle="tooltip" data-bs-placement="top" title="Expert">Bootstrap 5</h5>
                         <p class="skill-caption">Building Responsive UI</p>
@@ -820,7 +918,8 @@
 
                 <!-- Figma -->
                 <div class="col-6 col-md-4 col-lg-3 d-flex align-items-stretch" data-aos="zoom-in" data-aos-delay="100">
-                    <div class="skill-card text-center w-100" style="--skill-color: #a259ff; --skill-glow: rgba(162, 89, 255, 0.4);">
+                    <div class="skill-card text-center w-100"
+                        style="--skill-color: #a259ff; --skill-glow: rgba(162, 89, 255, 0.4);">
                         <i class="fab fa-figma skill-icon"></i>
                         <h5 data-bs-toggle="tooltip" data-bs-placement="top" title="Intermediate">Figma</h5>
                         <p class="skill-caption">Crafting Visual Experiences</p>
@@ -832,7 +931,8 @@
 
                 <!-- Photoshop -->
                 <div class="col-6 col-md-4 col-lg-3 d-flex align-items-stretch" data-aos="zoom-in" data-aos-delay="200">
-                    <div class="skill-card text-center w-100" style="--skill-color: #00a1e4; --skill-glow: rgba(0, 161, 228, 0.4);">
+                    <div class="skill-card text-center w-100"
+                        style="--skill-color: #00a1e4; --skill-glow: rgba(0, 161, 228, 0.4);">
                         <i class="fas fa-brush skill-icon"></i>
                         <h5 data-bs-toggle="tooltip" data-bs-placement="top" title="Intermediate">Photoshop</h5>
                         <p class="skill-caption">Refining Visual Assets</p>
@@ -938,7 +1038,8 @@
             </div>
             <div class="row justify-content-center">
                 <div class="col-lg-6">
-                    <form action="https://formspree.io/f/mgorrwpg" method="POST" id="contactForm" class="p-4 shadow-sm rounded-4 project-card" novalidate>
+                    <form action="https://formspree.io/f/mgorrwpg" method="POST" id="contactForm"
+                        class="p-4 shadow-sm rounded-4 project-card" novalidate>
                         <div class="mb-3">
                             <label for="nameInput" class="form-label">What should I call you?</label>
                             <input type="text" name="name" class="form-control" id="nameInput" placeholder="Your Name"
@@ -957,7 +1058,8 @@
                             <textarea name="message" class="form-control" id="messageInput" rows="4"
                                 placeholder="Briefly tell me about your project or inquiry..." required></textarea>
                         </div>
-                        <button type="submit" class="btn btn-gradient w-100 rounded-pill py-2 fw-bold text-white">Send Message</button>
+                        <button type="submit" class="btn btn-gradient w-100 rounded-pill py-2 fw-bold text-white">Send
+                            Message</button>
 
                         <div id="formSuccessMessage" class="alert alert-success mt-4 mb-0 d-none" role="alert">
                             <strong>Success!</strong> Your message has been sent. I'll get back to you soon.
@@ -1054,7 +1156,7 @@
                 successMessage.classList.add('d-none');
             } else {
                 emailInput.classList.remove('is-invalid');
-                
+
                 // Show a "Sending..." state
                 const submitBtn = this.querySelector('button[type="submit"]');
                 const originalBtnText = submitBtn.textContent;
@@ -1191,9 +1293,12 @@
             <i class="fas fa-plus"></i>
         </button>
         <ul id="fabList" class="fab-list">
-            <li><a href="https://github.com" target="_blank" class="fab-item fab-github" title="GitHub"><i class="fab fa-github"></i></a></li>
-            <li><a href="https://linkedin.com" target="_blank" class="fab-item fab-linkedin" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a></li>
-            <li><a href="https://wa.me" target="_blank" class="fab-item fab-whatsapp" title="WhatsApp"><i class="fab fa-whatsapp"></i></a></li>
+            <li><a href="https://github.com" target="_blank" class="fab-item fab-github" title="GitHub"><i
+                        class="fab fa-github"></i></a></li>
+            <li><a href="https://linkedin.com" target="_blank" class="fab-item fab-linkedin" title="LinkedIn"><i
+                        class="fab fa-linkedin-in"></i></a></li>
+            <li><a href="https://wa.me" target="_blank" class="fab-item fab-whatsapp" title="WhatsApp"><i
+                        class="fab fa-whatsapp"></i></a></li>
         </ul>
     </div>
 </body>
