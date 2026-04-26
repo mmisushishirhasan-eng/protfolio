@@ -326,15 +326,16 @@
             transition: all 0.3s ease;
         }
 
-        .nav-link:hover,
-        .nav-link[data-selected="true"] {
+        /* High-Specificity Active State Styling */
+        .navbar .navbar-nav .nav-link.active,
+        .navbar .navbar-nav .nav-link:hover {
             color: #00d2ff !important;
             /* Vibrant cyan */
             font-weight: 700 !important;
-            /* High priority bold */
+            /* Bold for visibility */
             text-decoration: none !important;
             text-shadow: 0 0 15px rgba(0, 210, 255, 0.3);
-            /* Premium glow */
+            /* Subtle premium glow */
         }
 
         /* Additional Section Styling */
@@ -1344,45 +1345,48 @@
             greetingElement.textContent = greeting;
         }
 
-        // --- BRUTE FORCE NAV LOGIC ---
+        // --- PROFESSIONAL SYNCHRONIZED NAV LOGIC ---
         window.onload = function () {
-            // 1. Explicitly Kill Bootstrap Scrollspy to prevent interference
-            const bodyElement = document.body;
-            const scrollSpyInstance = bootstrap.ScrollSpy.getInstance(bodyElement);
-            if (scrollSpyInstance) {
-                scrollSpyInstance.dispose();
-            }
-
             const navLinks = document.querySelectorAll('.nav-link');
             const sections = document.querySelectorAll('section[id]');
 
-            // High-Level Reset and Apply function
-            function forceSelect(targetLink) {
-                navLinks.forEach(link => {
-                    link.removeAttribute('data-selected');
-                    link.classList.remove('is-active', 'active'); // Cleanup any legacy classes
-                });
-                if (targetLink) {
-                    targetLink.setAttribute('data-selected', 'true');
-                }
+            // 1. Kill any existing Bootstrap Scrollspy to prevent conflicts
+            const scrollSpyInstance = bootstrap.ScrollSpy.getInstance(document.body);
+            if (scrollSpyInstance) scrollSpyInstance.dispose();
+
+            // Function to strictly set active class
+            function setActive(link) {
+                navLinks.forEach(l => l.classList.remove('active'));
+                if (link) link.classList.add('active');
             }
 
-            // 2. Global Navbar Click Listener
-            const navContainer = document.querySelector('.navbar-nav');
-            if (navContainer) {
-                navContainer.addEventListener('click', function (e) {
-                    const clickedLink = e.target.closest('.nav-link');
-                    if (clickedLink) {
-                        forceSelect(clickedLink);
-                        localStorage.setItem('bruteForceNav', clickedLink.getAttribute('href'));
+            // 2. Click Handling with Manual Smooth Scroll (Prevents state resets)
+            navLinks.forEach(link => {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault(); // Stop default jump
+                    const targetId = this.getAttribute('href');
+                    const targetSection = document.querySelector(targetId);
+
+                    if (targetSection) {
+                        // Instantly lock active state
+                        setActive(this);
+
+                        // Professional Smooth Scroll
+                        window.scrollTo({
+                            top: targetSection.offsetTop - 80, // Offset for fixed navbar
+                            behavior: 'smooth'
+                        });
+
+                        // Fallback: Ensure it stays active after scroll ends
+                        setTimeout(() => setActive(this), 800);
                     }
                 });
-            }
+            });
 
-            // 3. Brute Force Scrollspy (Intersection Observer)
+            // 3. Modern Intersection Observer (Syncs active state with scroll position)
             const observerOptions = {
                 root: null,
-                rootMargin: '-10% 0px -80% 0px',
+                rootMargin: '-10% 0px -70% 0px',
                 threshold: 0
             };
 
@@ -1391,17 +1395,12 @@
                     if (entry.isIntersecting) {
                         const id = entry.target.getAttribute('id');
                         const matchingLink = document.querySelector(`.nav-link[href="#${id}"]`);
-                        forceSelect(matchingLink);
+                        setActive(matchingLink);
                     }
                 });
             }, observerOptions);
 
             sections.forEach(section => observer.observe(section));
-
-            // 4. Initial Restore from LocalStorage or Default
-            const savedHref = localStorage.getItem('bruteForceNav') || '#home';
-            const defaultLink = document.querySelector(`.nav-link[href="${savedHref}"]`);
-            forceSelect(defaultLink);
         };
     </script>
 
@@ -1420,9 +1419,7 @@
         </ul>
     </div>
 
-    #navbarNav .navbar-nav .nav-link.active {
-    color: #00d2ff !important;
-}
+
 </body>
 
 
