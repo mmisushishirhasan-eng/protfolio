@@ -327,7 +327,7 @@
         }
 
         .nav-link:hover,
-        .nav-link.is-active {
+        .nav-link[data-selected="true"] {
             color: #00d2ff !important;
             /* Vibrant cyan */
             font-weight: 700 !important;
@@ -1344,52 +1344,64 @@
             greetingElement.textContent = greeting;
         }
 
-        // --- SURGICAL BULLETPROOF NAV LOGIC ---
+        // --- BRUTE FORCE NAV LOGIC ---
         window.onload = function () {
-            const sections = document.querySelectorAll('section[id]');
-            const navLinks = document.querySelectorAll('.nav-link');
+            // 1. Explicitly Kill Bootstrap Scrollspy to prevent interference
+            const bodyElement = document.body;
+            const scrollSpyInstance = bootstrap.ScrollSpy.getInstance(bodyElement);
+            if (scrollSpyInstance) {
+                scrollSpyInstance.dispose();
+            }
 
-            // 1. Modern Intersection Observer for Scroll
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('section[id]');
+
+            // High-Level Reset and Apply function
+            function forceSelect(targetLink) {
+                navLinks.forEach(link => {
+                    link.removeAttribute('data-selected');
+                    link.classList.remove('is-active', 'active'); // Cleanup any legacy classes
+                });
+                if (targetLink) {
+                    targetLink.setAttribute('data-selected', 'true');
+                }
+            }
+
+            // 2. Global Navbar Click Listener
+            const navContainer = document.querySelector('.navbar-nav');
+            if (navContainer) {
+                navContainer.addEventListener('click', function (e) {
+                    const clickedLink = e.target.closest('.nav-link');
+                    if (clickedLink) {
+                        forceSelect(clickedLink);
+                        localStorage.setItem('bruteForceNav', clickedLink.getAttribute('href'));
+                    }
+                });
+            }
+
+            // 3. Brute Force Scrollspy (Intersection Observer)
             const observerOptions = {
                 root: null,
                 rootMargin: '-10% 0px -80% 0px',
                 threshold: 0
             };
 
-            const observerCallback = (entries) => {
+            const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         const id = entry.target.getAttribute('id');
-                        navLinks.forEach(link => {
-                            link.classList.remove('is-active');
-                            if (link.getAttribute('href') === `#${id}`) {
-                                link.classList.add('is-active');
-                            }
-                        });
+                        const matchingLink = document.querySelector(`.nav-link[href="#${id}"]`);
+                        forceSelect(matchingLink);
                     }
                 });
-            };
+            }, observerOptions);
 
-            const observer = new IntersectionObserver(observerCallback, observerOptions);
             sections.forEach(section => observer.observe(section));
 
-            // 2. Persistent Click Handling
-            navLinks.forEach(link => {
-                link.addEventListener('click', function () {
-                    navLinks.forEach(btn => btn.classList.remove('is-active'));
-                    this.classList.add('is-active');
-
-                    // Remember selection
-                    localStorage.setItem('activeNavLink', this.getAttribute('href'));
-                });
-            });
-
-            // 3. Initial Load Sync
-            const savedLink = localStorage.getItem('activeNavLink') || '#home';
-            navLinks.forEach(link => {
-                if (link.getAttribute('href') === savedLink) link.classList.add('is-active');
-                else link.classList.remove('is-active');
-            });
+            // 4. Initial Restore from LocalStorage or Default
+            const savedHref = localStorage.getItem('bruteForceNav') || '#home';
+            const defaultLink = document.querySelector(`.nav-link[href="${savedHref}"]`);
+            forceSelect(defaultLink);
         };
     </script>
 
