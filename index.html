@@ -27,7 +27,8 @@
         .hero-section {
             background-color: #121212;
             color: #ffffff;
-            min-height: 100vh;
+            min-height: auto; /* Changed from 100vh */
+            padding-top: 120px !important; /* Account for navbar */
             display: flex;
             align-items: center;
             position: relative;
@@ -295,8 +296,8 @@
 
         /* Additional Section Styling */
         .content-section {
-            padding: 100px 0;
-            min-height: 100vh;
+            padding: 60px 0; /* Reduced from 100px */
+            /* min-height: 100vh removed to make sections compact */
             display: flex;
             align-items: center;
         }
@@ -430,6 +431,16 @@
 
             .hero-subtitle {
                 font-size: 1.2rem;
+            }
+            
+            .content-section {
+                padding: 40px 0; /* Even more compact on mobile */
+            }
+            
+            .hero-section {
+                min-height: auto;
+                padding-top: 100px; /* Account for navbar */
+                padding-bottom: 60px;
             }
         }
 
@@ -633,6 +644,29 @@
         .fab-whatsapp { background-color: #25d366; }
         .fab-linkedin { background-color: #0077b5; }
         .fab-github { background-color: #333; }
+
+        /* --- FORCE OVERRIDE SPACING --- */
+        
+        section {
+            margin-top: 0 !important;
+            margin-bottom: 0 !important;
+        }
+
+        /* 2. Remove hidden vertical gaps from inner containers */
+        section .container {
+            padding-top: 0 !important;
+            padding-bottom: 0 !important;
+            margin-top: 0 !important;
+            margin-bottom: 0 !important;
+        }
+
+        /* 3. Responsive adjustments for mobile */
+        @media (max-width: 768px) {
+            section {
+                padding-top: 20px !important;
+                padding-bottom: 20px !important;
+            }
+        }
     </style>
 </head>
 
@@ -694,7 +728,7 @@
                 <div class="col-lg-5 text-center">
                     <div class="profile-img-container">
                         <div class="blob-bg"></div>
-                        <img src="profile.jpg" alt="Profile Picture" class="hero-profile-img">
+                        <img src="profile.jpg" alt="profile Picture" class="hero-profile-img">
                     </div>
                 </div>
             </div>
