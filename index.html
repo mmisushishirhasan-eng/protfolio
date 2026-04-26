@@ -329,8 +329,12 @@
         .nav-link:hover,
         .nav-link.active {
             color: #00d2ff !important;
-            /* Vibrant cyan when active */
-            font-weight: 600 !important;
+            /* Vibrant cyan */
+            font-weight: 700 !important;
+            /* High priority bold */
+            text-decoration: none !important;
+            text-shadow: 0 0 15px rgba(0, 210, 255, 0.3);
+            /* Premium glow */
         }
 
         /* Additional Section Styling */
@@ -1340,31 +1344,35 @@
             greetingElement.textContent = greeting;
         }
 
-        // --- NUCLEAR FAILSAFE NAV LOGIC ---
+        // --- MODERN FAILSAFE NAV LOGIC (Intersection Observer) ---
         const sections = document.querySelectorAll('section[id]');
         const navLinks = document.querySelectorAll('.nav-link');
 
-        function activateNav() {
-            let scrollPos = window.scrollY || document.documentElement.scrollTop;
-            scrollPos += 150; // Trigger threshold
+        // 1. Automatic Highlight on Scroll
+        const observerOptions = {
+            root: null,
+            rootMargin: '-10% 0px -80% 0px', // Focuses on the top part of the viewport
+            threshold: 0
+        };
 
-            sections.forEach(section => {
-                if (scrollPos >= section.offsetTop && scrollPos < (section.offsetTop + section.offsetHeight)) {
-                    const targetId = section.getAttribute('id');
+        const observerCallback = (entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.getAttribute('id');
                     navLinks.forEach(link => {
                         link.classList.remove('active');
-                        if (link.getAttribute('href') === `#${targetId}`) {
+                        if (link.getAttribute('href') === `#${id}`) {
                             link.classList.add('active');
                         }
                     });
                 }
             });
-        }
+        };
 
-        // 1. Listen for Scroll
-        window.addEventListener('scroll', activateNav);
+        const observer = new IntersectionObserver(observerCallback, observerOptions);
+        sections.forEach(section => observer.observe(section));
 
-        // 2. Listen for Clicks
+        // 2. Persistent Click Handling
         navLinks.forEach(link => {
             link.addEventListener('click', function () {
                 navLinks.forEach(btn => btn.classList.remove('active'));
@@ -1382,7 +1390,6 @@
                 if (link.getAttribute('href') === savedLink) link.classList.add('active');
                 else link.classList.remove('active');
             });
-            activateNav();
         });
     </script>
 
