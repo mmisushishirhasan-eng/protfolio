@@ -326,8 +326,8 @@
             transition: all 0.3s ease;
         }
 
-        /* Absolute Override Active State Styling */
-        .nav-link[data-active="true"],
+        /* --- NAV SELECTED PERSISTENCE --- */
+        .nav-link.nav-selected,
         .nav-link:hover {
             color: #00d2ff !important;
             /* Vibrant cyan */
@@ -336,6 +336,15 @@
             text-decoration: none !important;
             text-shadow: 0 0 15px rgba(0, 210, 255, 0.3);
             /* Premium glow */
+        }
+
+        /* Kill standard focus/visited resets that might turn text white */
+        .nav-link:focus,
+        .nav-link:visited,
+        .nav-link:active {
+            color: inherit;
+            outline: none !important;
+            box-shadow: none !important;
         }
 
         /* Additional Section Styling */
@@ -1345,7 +1354,7 @@
             greetingElement.textContent = greeting;
         }
 
-        // --- ABSOLUTE OVERRIDE NAV LOGIC ---
+        // --- FINAL FOOLPROOF NAV LOGIC ---
         (function () {
             window.addEventListener('load', function () {
                 // 1. KILL Bootstrap Scrollspy
@@ -1358,14 +1367,13 @@
 
                 function forceActive(target) {
                     navLinks.forEach(l => {
-                        l.removeAttribute('data-active');
-                        l.classList.remove('active');
-                        // Explicitly force color reset
+                        l.classList.remove('nav-selected', 'active', 'is-active');
+                        // Force explicit reset
                         l.style.setProperty('color', 'rgba(255, 255, 255, 0.7)', 'important');
                     });
                     if (target) {
-                        target.setAttribute('data-active', 'true');
-                        // Explicitly force color apply
+                        target.classList.add('nav-selected');
+                        // Force explicit cyan
                         target.style.setProperty('color', '#00d2ff', 'important');
                     }
                 }
@@ -1375,7 +1383,7 @@
                     const link = e.target.closest('.nav-link');
                     if (link) {
                         forceActive(link);
-                        localStorage.setItem('absActiveNav', link.getAttribute('href'));
+                        localStorage.setItem('finalNavSelected', link.getAttribute('href'));
                     }
                 });
 
@@ -1399,7 +1407,7 @@
                 sections.forEach(s => observer.observe(s));
 
                 // 4. Memory Restore
-                const saved = localStorage.getItem('absActiveNav') || '#home';
+                const saved = localStorage.getItem('finalNavSelected') || '#home';
                 const defaultLink = document.querySelector(`.nav-link[href="${saved}"]`);
                 forceActive(defaultLink);
             });
