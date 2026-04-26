@@ -327,7 +327,7 @@
         }
 
         .nav-link:hover,
-        .nav-link.active {
+        .nav-link.is-active {
             color: #00d2ff !important;
             /* Vibrant cyan */
             font-weight: 700 !important;
@@ -1344,53 +1344,53 @@
             greetingElement.textContent = greeting;
         }
 
-        // --- MODERN FAILSAFE NAV LOGIC (Intersection Observer) ---
-        const sections = document.querySelectorAll('section[id]');
-        const navLinks = document.querySelectorAll('.nav-link');
+        // --- SURGICAL BULLETPROOF NAV LOGIC ---
+        window.onload = function () {
+            const sections = document.querySelectorAll('section[id]');
+            const navLinks = document.querySelectorAll('.nav-link');
 
-        // 1. Automatic Highlight on Scroll
-        const observerOptions = {
-            root: null,
-            rootMargin: '-10% 0px -80% 0px', // Focuses on the top part of the viewport
-            threshold: 0
-        };
+            // 1. Modern Intersection Observer for Scroll
+            const observerOptions = {
+                root: null,
+                rootMargin: '-10% 0px -80% 0px',
+                threshold: 0
+            };
 
-        const observerCallback = (entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const id = entry.target.getAttribute('id');
-                    navLinks.forEach(link => {
-                        link.classList.remove('active');
-                        if (link.getAttribute('href') === `#${id}`) {
-                            link.classList.add('active');
-                        }
-                    });
-                }
+            const observerCallback = (entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        navLinks.forEach(link => {
+                            link.classList.remove('is-active');
+                            if (link.getAttribute('href') === `#${id}`) {
+                                link.classList.add('is-active');
+                            }
+                        });
+                    }
+                });
+            };
+
+            const observer = new IntersectionObserver(observerCallback, observerOptions);
+            sections.forEach(section => observer.observe(section));
+
+            // 2. Persistent Click Handling
+            navLinks.forEach(link => {
+                link.addEventListener('click', function () {
+                    navLinks.forEach(btn => btn.classList.remove('is-active'));
+                    this.classList.add('is-active');
+
+                    // Remember selection
+                    localStorage.setItem('activeNavLink', this.getAttribute('href'));
+                });
             });
-        };
 
-        const observer = new IntersectionObserver(observerCallback, observerOptions);
-        sections.forEach(section => observer.observe(section));
-
-        // 2. Persistent Click Handling
-        navLinks.forEach(link => {
-            link.addEventListener('click', function () {
-                navLinks.forEach(btn => btn.classList.remove('active'));
-                this.classList.add('active');
-
-                // Remember selection even on page reload
-                localStorage.setItem('activeNavLink', this.getAttribute('href'));
-            });
-        });
-
-        // 3. Initial Load Sync
-        window.addEventListener('load', () => {
+            // 3. Initial Load Sync
             const savedLink = localStorage.getItem('activeNavLink') || '#home';
             navLinks.forEach(link => {
-                if (link.getAttribute('href') === savedLink) link.classList.add('active');
-                else link.classList.remove('active');
+                if (link.getAttribute('href') === savedLink) link.classList.add('is-active');
+                else link.classList.remove('is-active');
             });
-        });
+        };
     </script>
 
     <!-- Floating Action Button -->
