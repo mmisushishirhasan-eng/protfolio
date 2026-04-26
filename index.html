@@ -326,10 +326,9 @@
             transition: all 0.3s ease;
         }
 
-        /* --- ULTIMATE SPECIFICITY LOCK --- */
-        body #navbarNav .navbar-nav a.nav-link.active,
-        body #navbarNav .navbar-nav a.nav-link.nav-selected,
-        body #navbarNav .navbar-nav a.nav-link:hover {
+        /* --- THE KILLER FAIL-SAFE CSS --- */
+        header nav.navbar ul.navbar-nav li.nav-item a.nav-link.active-lock,
+        header nav.navbar ul.navbar-nav li.nav-item a.nav-link:hover {
             color: #00d2ff !important;
             /* Vibrant cyan */
             font-weight: 700 !important;
@@ -337,7 +336,7 @@
             text-decoration: none !important;
             text-shadow: 0 0 15px rgba(0, 210, 255, 0.3);
             /* Premium glow */
-            transition: color 0.3s ease, text-shadow 0.3s ease !important;
+            transition: color 0.3s ease !important;
         }
 
         /* Kill standard focus/visited resets that might turn text white */
@@ -1356,66 +1355,56 @@
             greetingElement.textContent = greeting;
         }
 
-        // --- ULTIMATE LOCK-IN NAV LOGIC ---
-        window.onload = function () {
+        // --- KILLER FAIL-SAFE NAV LOGIC ---
+        window.addEventListener('load', function () {
             const navLinks = document.querySelectorAll('.nav-link');
             const sections = document.querySelectorAll('section[id]');
-            const navbarNav = document.getElementById('navbarNav');
 
-            // 1. Kill Bootstrap Interference
+            // 1. DISABLING BOOTSTRAP AUTO-RESET
             const scrollSpyInstance = bootstrap.ScrollSpy.getInstance(document.body);
             if (scrollSpyInstance) scrollSpyInstance.dispose();
 
-            function lockActive(link) {
+            function applyLock(link) {
                 if (!link) return;
-                navLinks.forEach(l => l.classList.remove('active', 'nav-selected'));
-                link.classList.add('active');
+                navLinks.forEach(l => l.classList.remove('active-lock', 'active', 'nav-selected'));
+                link.classList.add('active-lock');
+
+                // The Global Listener Failsafe: Re-apply after 50ms 
+                // in case Bootstrap tries to flip it back to white
+                setTimeout(() => link.classList.add('active-lock'), 50);
             }
 
-            // 2. High-Priority Click Lock
-            navLinks.forEach(link => {
-                link.addEventListener('click', function (e) {
+            // 2. THE CLICK LISTENER (Capture Phase)
+            window.addEventListener('click', function (e) {
+                const clickedLink = e.target.closest('.nav-link');
+                if (clickedLink) {
                     e.preventDefault();
-                    e.stopImmediatePropagation(); // Block other scripts from catching this click
-
-                    const targetId = this.getAttribute('href');
+                    const targetId = clickedLink.getAttribute('href');
                     const targetSection = document.querySelector(targetId);
 
                     if (targetSection) {
-                        lockActive(this);
+                        applyLock(clickedLink);
                         window.scrollTo({
                             top: targetSection.offsetTop - 80,
                             behavior: 'smooth'
                         });
                     }
-                }, true); // Use capture phase to catch the event first
-            });
+                }
+            }, true);
 
-            // 3. Mutation Observer: Re-applies active class if something strips it
-            const observer = new MutationObserver((mutations) => {
-                mutations.forEach((mutation) => {
-                    if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-                        // If the navbar is "active-less" during a scroll/nav, we don't force it,
-                        // but if we just clicked/scrolled to a section, we ensure the state holds.
-                    }
-                });
-            });
-
-            navLinks.forEach(link => observer.observe(link, { attributes: true }));
-
-            // 4. Synchronized Scroll (Observer)
-            const scrollObserver = new IntersectionObserver((entries) => {
+            // 3. SYNCHRONIZED SCROLL (Observer)
+            const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         const id = entry.target.getAttribute('id');
                         const matchingLink = document.querySelector(`.nav-link[href="#${id}"]`);
-                        lockActive(matchingLink);
+                        applyLock(matchingLink);
                     }
                 });
             }, { rootMargin: '-10% 0px -70% 0px' });
 
-            sections.forEach(s => scrollObserver.observe(s));
-        };
+            sections.forEach(s => observer.observe(s));
+        });
     </script>
 
     <!-- Floating Action Button -->
