@@ -326,9 +326,10 @@
             transition: all 0.3s ease;
         }
 
-        /* --- NAV SELECTED PERSISTENCE --- */
-        .nav-link.nav-selected,
-        .nav-link:hover {
+        /* --- SPECIFICITY LOCK FOR ACTIVE LINKS --- */
+        #navbarNav .navbar-nav .nav-link.active,
+        #navbarNav .navbar-nav .nav-link.nav-selected,
+        #navbarNav .navbar-nav .nav-link:hover {
             color: #00d2ff !important;
             /* Vibrant cyan */
             font-weight: 700 !important;
@@ -1354,64 +1355,57 @@
             greetingElement.textContent = greeting;
         }
 
-        // --- FINAL FOOLPROOF NAV LOGIC ---
-        (function () {
-            window.addEventListener('load', function () {
-                // 1. KILL Bootstrap Scrollspy
-                const body = document.body;
-                const scrollSpy = bootstrap.ScrollSpy.getInstance(body);
-                if (scrollSpy) scrollSpy.dispose();
+        // --- FAIL-PROOF CLICK-LOCK NAV LOGIC ---
+        window.onload = function () {
+            const navLinks = document.querySelectorAll('.nav-link');
+            const sections = document.querySelectorAll('section[id]');
 
-                const navLinks = document.querySelectorAll('.nav-link');
-                const sections = document.querySelectorAll('section[id]');
+            // 1. DISABLING BOOTSTRAP RESET TRIGGER
+            // We already removed data-bs-spy from <body>, but this kills any residual JS behavior
+            const scrollSpyInstance = bootstrap.ScrollSpy.getInstance(document.body);
+            if (scrollSpyInstance) scrollSpyInstance.dispose();
 
-                function forceActive(target) {
-                    navLinks.forEach(l => {
-                        l.classList.remove('nav-selected', 'active', 'is-active');
-                        // Force explicit reset
-                        l.style.setProperty('color', 'rgba(255, 255, 255, 0.7)', 'important');
-                    });
-                    if (target) {
-                        target.classList.add('nav-selected');
-                        // Force explicit cyan
-                        target.style.setProperty('color', '#00d2ff', 'important');
-                    }
+            function lockActive(link) {
+                navLinks.forEach(l => l.classList.remove('active', 'nav-selected'));
+                if (link) {
+                    link.classList.add('active');
+                    // Safety Timeout: Re-apply after 100ms in case a library tries to reset it
+                    setTimeout(() => link.classList.add('active'), 100);
                 }
+            }
 
-                // 2. WINDOW LEVEL LISTENER
-                window.addEventListener('click', function (e) {
-                    const link = e.target.closest('.nav-link');
-                    if (link) {
-                        forceActive(link);
-                        localStorage.setItem('finalNavSelected', link.getAttribute('href'));
+            // 2. THE CLICK-LOCK LOGIC
+            navLinks.forEach(link => {
+                link.addEventListener('click', function (e) {
+                    e.preventDefault(); // Stop default jump to prevent state reset
+                    const targetId = this.getAttribute('href');
+                    const targetSection = document.querySelector(targetId);
+
+                    if (targetSection) {
+                        lockActive(this); // Lock the color immediately
+
+                        // Manual smooth scroll with offset
+                        window.scrollTo({
+                            top: targetSection.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
                     }
                 });
-
-                // 3. Scroll Synchronization (Observer)
-                const observerOptions = {
-                    root: null,
-                    rootMargin: '-10% 0px -75% 0px',
-                    threshold: 0
-                };
-
-                const observer = new IntersectionObserver(entries => {
-                    entries.forEach(entry => {
-                        if (entry.isIntersecting) {
-                            const id = entry.target.getAttribute('id');
-                            const link = document.querySelector(`.nav-link[href="#${id}"]`);
-                            if (link) forceActive(link);
-                        }
-                    });
-                }, observerOptions);
-
-                sections.forEach(s => observer.observe(s));
-
-                // 4. Memory Restore
-                const saved = localStorage.getItem('finalNavSelected') || '#home';
-                const defaultLink = document.querySelector(`.nav-link[href="${saved}"]`);
-                forceActive(defaultLink);
             });
-        })();
+
+            // 3. SYNCHRONIZED SCROLL (Observer)
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        const matchingLink = document.querySelector(`.nav-link[href="#${id}"]`);
+                        lockActive(matchingLink);
+                    }
+                });
+            }, { rootMargin: '-10% 0px -70% 0px' });
+
+            sections.forEach(s => observer.observe(s));
+        };
     </script>
 
     <!-- Floating Action Button -->
