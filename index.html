@@ -319,15 +319,18 @@
         }
 
         .nav-link {
-            color: #d1d1d1 !important;
+            color: rgba(255, 255, 255, 0.7) !important;
+            /* Dimmed white by default */
             font-weight: 400;
             margin: 0 10px;
-            transition: color 0.3s ease;
+            transition: all 0.3s ease;
         }
 
         .nav-link:hover,
         .nav-link.active {
             color: #00d2ff !important;
+            /* Vibrant cyan when active */
+            font-weight: 600 !important;
         }
 
         /* Additional Section Styling */
@@ -837,7 +840,7 @@
             <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link active" href="#home">Home</a>
+                        <a class="nav-link" href="#home">Home</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#about">About</a>
@@ -1338,11 +1341,13 @@
             greetingElement.textContent = greeting;
         }
 
-        // Navbar Active State on Click
+        // Failsafe Navbar Active State on Click
         const navLinks = document.querySelectorAll('.nav-link');
         navLinks.forEach(link => {
             link.addEventListener('click', function () {
+                // Instantly remove 'active' class from ALL links to prevent double-highlighting
                 navLinks.forEach(btn => btn.classList.remove('active'));
+                // Add 'active' class only to the clicked link
                 this.classList.add('active');
             });
         });
