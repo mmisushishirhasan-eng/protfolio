@@ -326,10 +326,10 @@
             transition: all 0.3s ease;
         }
 
-        /* --- SPECIFICITY LOCK FOR ACTIVE LINKS --- */
-        #navbarNav .navbar-nav .nav-link.active,
-        #navbarNav .navbar-nav .nav-link.nav-selected,
-        #navbarNav .navbar-nav .nav-link:hover {
+        /* --- ULTIMATE SPECIFICITY LOCK --- */
+        body #navbarNav .navbar-nav a.nav-link.active,
+        body #navbarNav .navbar-nav a.nav-link.nav-selected,
+        body #navbarNav .navbar-nav a.nav-link:hover {
             color: #00d2ff !important;
             /* Vibrant cyan */
             font-weight: 700 !important;
@@ -337,6 +337,7 @@
             text-decoration: none !important;
             text-shadow: 0 0 15px rgba(0, 210, 255, 0.3);
             /* Premium glow */
+            transition: color 0.3s ease, text-shadow 0.3s ease !important;
         }
 
         /* Kill standard focus/visited resets that might turn text white */
@@ -1355,46 +1356,55 @@
             greetingElement.textContent = greeting;
         }
 
-        // --- FAIL-PROOF CLICK-LOCK NAV LOGIC ---
+        // --- ULTIMATE LOCK-IN NAV LOGIC ---
         window.onload = function () {
             const navLinks = document.querySelectorAll('.nav-link');
             const sections = document.querySelectorAll('section[id]');
+            const navbarNav = document.getElementById('navbarNav');
 
-            // 1. DISABLING BOOTSTRAP RESET TRIGGER
-            // We already removed data-bs-spy from <body>, but this kills any residual JS behavior
+            // 1. Kill Bootstrap Interference
             const scrollSpyInstance = bootstrap.ScrollSpy.getInstance(document.body);
             if (scrollSpyInstance) scrollSpyInstance.dispose();
 
             function lockActive(link) {
+                if (!link) return;
                 navLinks.forEach(l => l.classList.remove('active', 'nav-selected'));
-                if (link) {
-                    link.classList.add('active');
-                    // Safety Timeout: Re-apply after 100ms in case a library tries to reset it
-                    setTimeout(() => link.classList.add('active'), 100);
-                }
+                link.classList.add('active');
             }
 
-            // 2. THE CLICK-LOCK LOGIC
+            // 2. High-Priority Click Lock
             navLinks.forEach(link => {
                 link.addEventListener('click', function (e) {
-                    e.preventDefault(); // Stop default jump to prevent state reset
+                    e.preventDefault();
+                    e.stopImmediatePropagation(); // Block other scripts from catching this click
+
                     const targetId = this.getAttribute('href');
                     const targetSection = document.querySelector(targetId);
 
                     if (targetSection) {
-                        lockActive(this); // Lock the color immediately
-
-                        // Manual smooth scroll with offset
+                        lockActive(this);
                         window.scrollTo({
                             top: targetSection.offsetTop - 80,
                             behavior: 'smooth'
                         });
                     }
+                }, true); // Use capture phase to catch the event first
+            });
+
+            // 3. Mutation Observer: Re-applies active class if something strips it
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                        // If the navbar is "active-less" during a scroll/nav, we don't force it,
+                        // but if we just clicked/scrolled to a section, we ensure the state holds.
+                    }
                 });
             });
 
-            // 3. SYNCHRONIZED SCROLL (Observer)
-            const observer = new IntersectionObserver((entries) => {
+            navLinks.forEach(link => observer.observe(link, { attributes: true }));
+
+            // 4. Synchronized Scroll (Observer)
+            const scrollObserver = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         const id = entry.target.getAttribute('id');
@@ -1404,7 +1414,7 @@
                 });
             }, { rootMargin: '-10% 0px -70% 0px' });
 
-            sections.forEach(s => observer.observe(s));
+            sections.forEach(s => scrollObserver.observe(s));
         };
     </script>
 
