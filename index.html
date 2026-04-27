@@ -1351,25 +1351,26 @@
             greetingElement.textContent = greeting;
         }
 
-        // --- Custom ScrollSpy Logic ---
+        // --- Bulletproof ScrollSpy & Click Logic ---
         document.addEventListener('DOMContentLoaded', () => {
             const navLinks = document.querySelectorAll('.nav-link');
             const sections = document.querySelectorAll('section[id]');
+            let isScrollingManually = false;
 
-            // Function to handle active state
             const makeActive = (link) => {
+                if (!link) return;
                 navLinks.forEach(item => item.classList.remove('active'));
-                if (link) link.classList.add('active');
+                link.classList.add('active');
             };
 
-            // Intersection Observer for ScrollSpy
             const observerOptions = {
                 root: null,
-                rootMargin: '-20% 0px -70% 0px',
+                rootMargin: '-40% 0px -40% 0px',
                 threshold: 0
             };
 
             const observer = new IntersectionObserver((entries) => {
+                if (isScrollingManually) return;
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         const id = entry.target.getAttribute('id');
@@ -1381,17 +1382,13 @@
 
             sections.forEach(section => observer.observe(section));
 
-            // Click listener for immediate feedback
             navLinks.forEach(link => {
                 link.addEventListener('click', function (e) {
-                    const targetId = this.getAttribute('href');
-                    if (targetId.startsWith('#')) {
-                        const targetElement = document.querySelector(targetId);
-                        if (targetElement) {
-                            makeActive(this);
-                            // Optional: Manual scroll if needed, but smooth scroll is already on HTML
-                        }
-                    }
+                    isScrollingManually = true;
+                    makeActive(this);
+                    setTimeout(() => {
+                        isScrollingManually = false;
+                    }, 6000); // ৬ সেকেন্ড লক
                 });
             });
         });
