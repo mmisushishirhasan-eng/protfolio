@@ -326,17 +326,13 @@
             transition: all 0.3s ease;
         }
 
-        /* --- THE KILLER FAIL-SAFE CSS --- */
-        header nav.navbar ul.navbar-nav li.nav-item a.nav-link.active-lock,
-        header nav.navbar ul.navbar-nav li.nav-item a.nav-link:hover {
-            color: #00d2ff !important;
-            /* Vibrant cyan */
+        /* Active Link Styling */
+        .nav-link.active,
+        .nav-link:hover {
+            color: #007bff !important;
             font-weight: 700 !important;
-            /* Bold for visibility */
-            text-decoration: none !important;
-            text-shadow: 0 0 15px rgba(0, 210, 255, 0.3);
-            /* Premium glow */
-            transition: color 0.3s ease !important;
+            text-shadow: 0 0 10px rgba(0, 123, 255, 0.2);
+            transition: all 0.3s ease;
         }
 
         /* Kill standard focus/visited resets that might turn text white */
@@ -565,15 +561,10 @@
             color: #333 !important;
         }
 
-        [data-bs-theme="light"] .nav-link:hover,
-        [data-bs-theme="light"] .nav-link.active {
-            color: #3a7bd5 !important;
-        }
-
-        .navbar-dark .navbar-nav .nav-link.active {
-            color: #00d2ff !important;
-            /* Cyan/Blue color for active link in dark mode */
-            font-weight: 600;
+        /* Active link color override for all themes */
+        [data-bs-theme="light"] .nav-link.active,
+        [data-bs-theme="dark"] .nav-link.active {
+            color: #007bff !important;
         }
 
         /* Preloader Styles */
@@ -828,6 +819,16 @@
                 font-size: 1.3rem;
                 /* Slightly smaller on mobile to prevent squishing */
             }
+        }
+
+        .navbar-nav .nav-link.active {
+            color: #007bff !important;
+            font-weight: bold;
+            ! important;
+            /* অ্যাকটিভ লিঙ্ককে হাইলাইট করার জন্য */
+            text-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
+            !important;
+            /* সেই নীল আভা */
         }
     </style>
 </head>
@@ -1148,6 +1149,17 @@
         </div>
     </footer>
 
+    const navLinks = document.querySelectorAll('.nav-link');
+
+    navLinks.forEach(link => {
+    link.addEventListener('click', function() {
+    // আগের সব নীল রঙ সরাও
+    navLinks.forEach(item => item.classList.remove('active'));
+    // যেটাতে ক্লিক করেছো সেটাতে নীল রঙ লাগাও
+    this.classList.add('active');
+    });
+    });
+
     <!-- Back to Top Button -->
     <button id="backToTop" title="Go to top">↑</button>
 
@@ -1355,55 +1367,49 @@
             greetingElement.textContent = greeting;
         }
 
-        // --- KILLER FAIL-SAFE NAV LOGIC ---
-        window.addEventListener('load', function () {
+        // --- Custom ScrollSpy Logic ---
+        document.addEventListener('DOMContentLoaded', () => {
             const navLinks = document.querySelectorAll('.nav-link');
             const sections = document.querySelectorAll('section[id]');
 
-            // 1. DISABLING BOOTSTRAP AUTO-RESET
-            const scrollSpyInstance = bootstrap.ScrollSpy.getInstance(document.body);
-            if (scrollSpyInstance) scrollSpyInstance.dispose();
+            // Function to handle active state
+            const makeActive = (link) => {
+                navLinks.forEach(item => item.classList.remove('active'));
+                if (link) link.classList.add('active');
+            };
 
-            function applyLock(link) {
-                if (!link) return;
-                navLinks.forEach(l => l.classList.remove('active-lock', 'active', 'nav-selected'));
-                link.classList.add('active-lock');
+            // Intersection Observer for ScrollSpy
+            const observerOptions = {
+                root: null,
+                rootMargin: '-20% 0px -70% 0px',
+                threshold: 0
+            };
 
-                // The Global Listener Failsafe: Re-apply after 50ms 
-                // in case Bootstrap tries to flip it back to white
-                setTimeout(() => link.classList.add('active-lock'), 50);
-            }
-
-            // 2. THE CLICK LISTENER (Capture Phase)
-            window.addEventListener('click', function (e) {
-                const clickedLink = e.target.closest('.nav-link');
-                if (clickedLink) {
-                    e.preventDefault();
-                    const targetId = clickedLink.getAttribute('href');
-                    const targetSection = document.querySelector(targetId);
-
-                    if (targetSection) {
-                        applyLock(clickedLink);
-                        window.scrollTo({
-                            top: targetSection.offsetTop - 80,
-                            behavior: 'smooth'
-                        });
-                    }
-                }
-            }, true);
-
-            // 3. SYNCHRONIZED SCROLL (Observer)
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
                         const id = entry.target.getAttribute('id');
                         const matchingLink = document.querySelector(`.nav-link[href="#${id}"]`);
-                        applyLock(matchingLink);
+                        makeActive(matchingLink);
                     }
                 });
-            }, { rootMargin: '-10% 0px -70% 0px' });
+            }, observerOptions);
 
-            sections.forEach(s => observer.observe(s));
+            sections.forEach(section => observer.observe(section));
+
+            // Click listener for immediate feedback
+            navLinks.forEach(link => {
+                link.addEventListener('click', function (e) {
+                    const targetId = this.getAttribute('href');
+                    if (targetId.startsWith('#')) {
+                        const targetElement = document.querySelector(targetId);
+                        if (targetElement) {
+                            makeActive(this);
+                            // Optional: Manual scroll if needed, but smooth scroll is already on HTML
+                        }
+                    }
+                });
+            });
         });
     </script>
 
@@ -1421,6 +1427,11 @@
                         class="fab fa-whatsapp"></i></a></li>
         </ul>
     </div>
+    .nav-link.active {
+    color: #007bff !important; /* লেখা নীল করার জন্য */
+    background-color: rgba (0, 123, 255, 0.1) !important; !importanar; /* হালকা নীল ব্যাকগ্রাউন্ডের জন্য */
+    font-weight: bold;!important; /* অ্যাকটিভ লিঙ্ককে হাইলাইট করার জন্য */
+    }
 
 
 </body>
