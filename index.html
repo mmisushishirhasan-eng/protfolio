@@ -326,12 +326,15 @@
             transition: all 0.3s ease;
         }
 
-        /* Active Link Styling */
+        /* Active Link Styling - Persistent Blue */
         .nav-link.active,
         .nav-link:hover {
             color: #007bff !important;
             font-weight: 700 !important;
-            text-shadow: 0 0 10px rgba(0, 123, 255, 0.2);
+            text-shadow: 0 0 12px rgba(0, 123, 255, 0.4);
+            background-color: rgba(0, 123, 255, 0.08) !important;
+            border-radius: 50px;
+            padding: 8px 20px !important;
             transition: all 0.3s ease;
         }
 
@@ -820,15 +823,6 @@
                 /* Slightly smaller on mobile to prevent squishing */
             }
         }
-
-        .navbar-nav .nav-link.active {
-            color: #007bff !important;
-            font-weight: bold;
-            ! important;
-            /* অ্যাকটিভ লিঙ্ককে হাইলাইট করার জন্য */
-            text-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
-            !important;
-            /* সেই নীল আভা */
         }
     </style>
 </head>
@@ -1140,6 +1134,7 @@
         </div>
     </section>
 
+
     <!-- Footer Section -->
     <footer class="py-4 text-center mt-auto border-top border-secondary-subtle">
         <div class="container">
@@ -1148,17 +1143,6 @@
             </p>
         </div>
     </footer>
-
-    const navLinks = document.querySelectorAll('.nav-link');
-
-    navLinks.forEach(link => {
-    link.addEventListener('click', function() {
-    // আগের সব নীল রঙ সরাও
-    navLinks.forEach(item => item.classList.remove('active'));
-    // যেটাতে ক্লিক করেছো সেটাতে নীল রঙ লাগাও
-    this.classList.add('active');
-    });
-    });
 
     <!-- Back to Top Button -->
     <button id="backToTop" title="Go to top">↑</button>
@@ -1427,14 +1411,6 @@
                         class="fab fa-whatsapp"></i></a></li>
         </ul>
     </div>
-    .nav-link.active {
-    color: #007bff !important; /* লেখা নীল করার জন্য */
-    background-color: rgba (0, 123, 255, 0.1) !important; !importanar; /* হালকা নীল ব্যাকগ্রাউন্ডের জন্য */
-    font-weight: bold;!important; /* অ্যাকটিভ লিঙ্ককে হাইলাইট করার জন্য */
-    }
-
-
 </body>
-
 
 </html>
