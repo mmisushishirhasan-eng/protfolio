@@ -5,15 +5,29 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Personal Portfolio</title>
+    <!-- Resource Hints & Preconnects -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="preconnect" href="https://unpkg.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
     <!-- Bootstrap 5 CSS CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <!-- Google Fonts for typography -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <!-- AOS CSS -->
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <!-- Font Awesome CDN -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- AOS CSS (Deferred) -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript>
+        <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    </noscript>
+    <!-- Font Awesome CDN (Deferred) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        media="print" onload="this.media='all'">
+    <noscript>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    </noscript>
     <style>
         html {
             scroll-behavior: smooth;
@@ -66,31 +80,53 @@
             }
         }
 
-        .hero-content {
-            z-index: 2;
-        }
-
-        /* Futuristic Profile Image Wrapper */
+        /* Single Color Rotating Border - Minimalist */
         .profile-img-container {
             position: relative;
             display: inline-block;
-            padding: 30px;
+            padding: 8px;
             animation: float 6s ease-in-out infinite;
             z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .blob-bg {
+        .profile-img-container::before {
+            content: '';
             position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 380px;
-            height: 380px;
-            background: linear-gradient(45deg, #00d2ff, #3a7bd5);
-            filter: blur(40px);
-            opacity: 0.5;
+            width: 330px;
+            height: 330px;
+            border-radius: 50%;
+            /* Clean Cyan Spinner Effect without Glow */
+            background: conic-gradient(from 0deg, #00d2ff, transparent 60%);
+            animation: rotate-border 4s linear infinite;
             z-index: -1;
-            transform: translate(-50%, -50%);
-            animation: morph 8s ease-in-out infinite alternate, aura-pulse 4s ease-in-out infinite;
+        }
+
+        /* Inner Mask */
+        .profile-img-container::after {
+            content: '';
+            position: absolute;
+            width: 320px;
+            height: 320px;
+            background: #121212;
+            border-radius: 50%;
+            z-index: -1;
+        }
+
+        [data-bs-theme="light"] .profile-img-container::after {
+            background: #ffffff;
+        }
+
+        @keyframes rotate-border {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         .hero-profile-img {
@@ -99,12 +135,13 @@
             object-fit: cover;
             object-position: center top;
             border-radius: 50%;
-            border: 8px solid rgba(255, 255, 255, 0.1);
+            border: none;
             backdrop-filter: blur(5px);
             -webkit-backdrop-filter: blur(5px);
-            box-shadow: 0 10px 50px rgba(0, 210, 255, 0.4);
             display: block;
             margin: 0 auto;
+            position: relative;
+            z-index: 2;
         }
 
         @keyframes morph {
@@ -326,13 +363,13 @@
             transition: all 0.3s ease;
         }
 
-        /* Active Link Styling - Persistent Blue */
+        /* Active Link Styling - Persistent Orange */
         .nav-link.active,
         .nav-link:hover {
-            color: #007bff !important;
+            color: #ff6600 !important;
             font-weight: 700 !important;
-            text-shadow: 0 0 12px rgba(0, 123, 255, 0.4);
-            background-color: rgba(0, 123, 255, 0.08) !important;
+            text-shadow: 0 0 12px rgba(255, 102, 0, 0.4);
+            background-color: rgba(255, 102, 0, 0.08) !important;
             border-radius: 50px;
             padding: 8px 20px !important;
             transition: all 0.3s ease;
@@ -885,8 +922,11 @@
                 </div>
                 <div class="col-lg-5 text-center">
                     <div class="profile-img-container">
-                        <div class="blob-bg"></div>
-                        <img src="profile.jpg" alt="profile Picture" class="hero-profile-img">
+                        <picture>
+                            <source srcset="profile.webp" type="image/webp">
+                            <img src="profile.jpg" alt="profile Picture" class="hero-profile-img" width="320"
+                                height="320" fetchpriority="high">
+                        </picture>
                     </div>
                 </div>
             </div>
@@ -1031,7 +1071,8 @@
                     <div class="card project-card h-100 shadow-sm border-0">
                         <div class="img-wrapper">
                             <img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-                                class="card-img-top" alt="Web Development Project">
+                                class="card-img-top" alt="Web Development Project" loading="lazy" width="600"
+                                height="400">
                         </div>
                         <div class="card-body d-flex flex-column p-4">
                             <h5 class="card-title fw-bold">E-Commerce Platform</h5>
@@ -1053,7 +1094,7 @@
                     <div class="card project-card h-100 shadow-sm border-0">
                         <div class="img-wrapper">
                             <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-                                class="card-img-top" alt="Analytics Dashboard">
+                                class="card-img-top" alt="Analytics Dashboard" loading="lazy" width="600" height="400">
                         </div>
                         <div class="card-body d-flex flex-column p-4">
                             <h5 class="card-title fw-bold">Data Analytics Dashboard</h5>
@@ -1074,7 +1115,7 @@
                     <div class="card project-card h-100 shadow-sm border-0">
                         <div class="img-wrapper">
                             <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80"
-                                class="card-img-top" alt="Coding Portfolio">
+                                class="card-img-top" alt="Coding Portfolio" loading="lazy" width="600" height="400">
                         </div>
                         <div class="card-body d-flex flex-column p-4">
                             <h5 class="card-title fw-bold">Task Management App</h5>
@@ -1149,12 +1190,12 @@
 
     <!-- Bootstrap 5 JS Bundle with Popper (CDN) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmxc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-        crossorigin="anonymous"></script>
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmxc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"
+        defer></script>
     <!-- AOS JS -->
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js" defer></script>
     <!-- Typed JS -->
-    <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
+    <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js" defer></script>
 
     <script>
         // Initialize AOS
